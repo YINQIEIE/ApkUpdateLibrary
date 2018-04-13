@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="NobackDialog" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!--dialog 布局部分背景为透明-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--dialog 整个窗口背景设置：true 为半透明；false 为白色-->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+</resources>
