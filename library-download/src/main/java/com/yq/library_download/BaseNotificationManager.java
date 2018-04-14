@@ -12,6 +12,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Administrator on 2018/4/13.
+ * 要显示 notification 需要继承这个类，实现设置通知图标的方法
  */
 
 public abstract class BaseNotificationManager {
@@ -24,13 +25,10 @@ public abstract class BaseNotificationManager {
 
     public BaseNotificationManager(Context mContext) {
         this.mContext = mContext;
+        initNotification();
     }
 
-    /**
-     * 初始化通知栏
-     */
-    // TODO library
-    public void initNotify() {
+    private void initNotification() {
         mNotificationManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setWhen(System.currentTimeMillis())// 通知产生的时间，会在通知信息里显示
@@ -44,6 +42,12 @@ public abstract class BaseNotificationManager {
                 // Notification.DEFAULT_ALL Notification.DEFAULT_SOUND 添加声音 //
                 // requires VIBRATE permission
                 .setSmallIcon(getSmallIconId());
+    }
+
+    /**
+     * 初始化通知栏
+     */
+    public void showNotification() {
         mNotificationManager.notify(notifyId, mBuilder.build());
     }
 

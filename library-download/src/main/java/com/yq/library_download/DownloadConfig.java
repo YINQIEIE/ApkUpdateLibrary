@@ -16,6 +16,44 @@ public class DownloadConfig implements Serializable {
     private boolean forceToUpdate;
     private boolean append;
 
+    public DownloadConfig() {
+    }
+
+    public DownloadConfig url(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public DownloadConfig updateMsg(String updateMsg) {
+        this.updateMsg = updateMsg;
+        return this;
+    }
+
+    public DownloadConfig savePath(String savePath) {
+        this.savePath = savePath;
+        return this;
+    }
+
+    public DownloadConfig localName(String localName) {
+        this.localName = localName;
+        return this;
+    }
+
+    public DownloadConfig version(String version) {
+        this.version = version;
+        return this;
+    }
+
+    public DownloadConfig forceToUpdate(boolean forceToUpdate) {
+        this.forceToUpdate = forceToUpdate;
+        return this;
+    }
+
+    public DownloadConfig isAppend(boolean append) {
+        this.append = append;
+        return this;
+    }
+
     public DownloadConfig(String url, String updateMsg, String savePath, String localName, String version, boolean forceToUpdate, boolean append) {
         this.url = url;
         this.updateMsg = updateMsg;

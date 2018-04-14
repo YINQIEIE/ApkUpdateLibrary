@@ -6,6 +6,7 @@ import com.yq.library_download.BaseNotificationManager;
 
 /**
  * Created by Administrator on 2018/4/13.
+ * 主要设置通知图标
  */
 
 public class MyNotificationManager extends BaseNotificationManager {

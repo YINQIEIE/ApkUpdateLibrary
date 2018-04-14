@@ -117,14 +117,10 @@ public class DownLoadService extends Service {
      */
     public void setNotify(int max, int progress) {
         if (null != cMessenger) {
-            Message message = Message.obtain();
-            message.what = DOWNLOADING;
-            message.obj = progress * 100 / max;
-            try {
-                cMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            if (max == progress)
+                sendMsgToCMessenger(DOWNLOAD_SUCCESS, "下载完成");
+            else
+                sendMsgToCMessenger(DOWNLOADING, progress * 100 / max);
         }
     }
 
@@ -209,7 +205,6 @@ public class DownLoadService extends Service {
                 downedFileLength += count;
                 outputStream.write(buffer, 0, count);
             }
-            sendMsgToCMessenger(DOWNLOAD_SUCCESS, "下载完成");
             saveDownInfo(appName);//保存下载完成的信息
             isDownloading = false;
 

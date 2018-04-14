@@ -64,7 +64,7 @@ public class DownloadUtil {
                     if (null != downloadListener)
                         downloadListener.onStart();
                     if (null != mNotificationManager)
-                        mNotificationManager.initNotify();
+                        mNotificationManager.showNotification();
                     break;
                 case DOWNLOADING:
                     int progress = Integer.parseInt(msg.obj.toString());
@@ -130,7 +130,7 @@ public class DownloadUtil {
     /**
      * 开始下载任务
      */
-    private void startDownload() {
+    public void startDownload() {
         if (null == downloadConfig)
             throw new RuntimeException("Method init() should be called first !");
         if (isApkDownloadFinished()) {//已经下载完成
