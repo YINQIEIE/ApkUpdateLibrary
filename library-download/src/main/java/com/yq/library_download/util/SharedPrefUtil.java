@@ -1,4 +1,4 @@
-package com.yq.library_download;
+package com.yq.library_download.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

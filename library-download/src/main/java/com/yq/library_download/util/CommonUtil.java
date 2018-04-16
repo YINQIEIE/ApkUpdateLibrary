@@ -1,4 +1,4 @@
-package com.yq.library_download;
+package com.yq.library_download.util;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -163,7 +163,7 @@ public class CommonUtil {
      */
 
     public static boolean isWifi(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
             return true;

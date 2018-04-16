@@ -81,4 +81,8 @@ public abstract class BaseNotificationManager {
         mNotificationManager.notify(notifyId, mBuilder.build());
     }
 
+    public void cancel() {
+        mNotificationManager.cancel(notifyId);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.yq.library_download;
+package com.yq.library_download.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.yq.library_download.DownloadConfig;
+import com.yq.library_download.util.SharedPrefUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,11 +23,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.yq.library_download.DownloadListener.DOWNLOADING;
-import static com.yq.library_download.DownloadListener.DOWNLOAD_ERROR;
-import static com.yq.library_download.DownloadListener.DOWNLOAD_SUCCESS;
-import static com.yq.library_download.DownloadUtil.getApkFile;
-import static com.yq.library_download.SharedPrefUtil.getDownloadSp;
+import static com.yq.library_download.listener.DownloadListener.DOWNLOADING;
+import static com.yq.library_download.listener.DownloadListener.DOWNLOAD_ERROR;
+import static com.yq.library_download.listener.DownloadListener.DOWNLOAD_SUCCESS;
+import static com.yq.library_download.util.ApkUtil.getApkFile;
+import static com.yq.library_download.util.ApkUtil.getApkName;
+import static com.yq.library_download.util.SharedPrefUtil.getDownloadSp;
 
 //此类用于自动更新
 public class DownLoadService extends Service {
@@ -94,7 +98,7 @@ public class DownLoadService extends Service {
     public IBinder onBind(Intent intent) {
         downloadConfig = (DownloadConfig) intent.getExtras().get("config");
         url = downloadConfig.getUrl();
-        appName = DownloadUtil.getApkName(downloadConfig);
+        appName = getApkName(downloadConfig);
         return mMessenger.getBinder();
     }
 
@@ -117,10 +121,9 @@ public class DownLoadService extends Service {
      */
     public void setNotify(int max, int progress) {
         if (null != cMessenger) {
+            sendMsgToCMessenger(DOWNLOADING, progress * 100 / max);
             if (max == progress)
                 sendMsgToCMessenger(DOWNLOAD_SUCCESS, "下载完成");
-            else
-                sendMsgToCMessenger(DOWNLOADING, progress * 100 / max);
         }
     }
 

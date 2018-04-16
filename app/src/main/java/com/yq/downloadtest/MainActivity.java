@@ -8,13 +8,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.yq.library_download.DownLoadManager;
 import com.yq.library_download.DownloadConfig;
-import com.yq.library_download.DownloadListener;
-import com.yq.library_download.DownloadUtil;
+import com.yq.library_download.listener.DownloadListener;
+
+import java.util.Locale;
+
+import static com.yq.library_download.DownLoadManager.ExitApp;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DownloadUtil downloadUtil;
     private AlertDialog dialog;
     private DownloadListener downloadListener = new DownloadListener() {
         @Override
@@ -24,12 +27,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onDownloading(int progress) {
+            Log.i("download", "progress = " + progress);
             dialog.setMessage(getLoadingMsg(progress));
+            if (!dialog.isShowing())
+                dialog.show();
         }
 
         @Override
         public void onDownloadSuccess() {
-            dialog.setMessage("下载成功");
+            dialog.setTitle("下载完成");
         }
 
         @Override
@@ -37,18 +43,20 @@ public class MainActivity extends AppCompatActivity {
             dialog.setMessage(msg);
         }
     };
+    private DownLoadManager downloadManager;
+    private DownloadConfig config;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyApplication.getRw().watch(this);
         String url = "http://hm.hawknet.com.cn/hm_debug_2.0.apk";
         String updateMsg = "new version avaliable";
         String savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp";
         String localName = "hello";
         String version = "2.0.0";
-//        DownloadConfig config = new DownloadConfig(url, updateMsg, savePath, localName, version, false, true);
-        DownloadConfig config = new DownloadConfig()
+        config = new DownloadConfig()
                 .url(url)
                 .updateMsg(updateMsg)
                 .savePath(savePath)
@@ -56,14 +64,13 @@ public class MainActivity extends AppCompatActivity {
                 .version(version)
                 .forceToUpdate(false)
                 .isAppend(true);
-        downloadUtil = new DownloadUtil(this);
-        downloadUtil.init(config);
-        MyNotificationManager manager = new MyNotificationManager(this);
-        downloadUtil.setmNotificationManager(manager);
-        downloadUtil.setDownloadListener(downloadListener);
-        Log.i("download", downloadUtil.getApkFile(config).getAbsolutePath());
-//        downloadUtil.showNewVersionDialog();
-        downloadUtil.showNewVersionDialog(showNewVersionDialog());
+        downloadManager = new DownLoadManager(this, config);
+        MyNotificationManager notificationManager = new MyNotificationManager(this);
+        downloadManager.setmNotificationManager(notificationManager);
+        downloadManager.setNotWifiDialog(getNotWifiDialog());
+        downloadManager.setDownloadListener(downloadListener);
+//        downloadManager.showNewVersionDialog();
+        showNewVersionDialog();
     }
 
     public Dialog showNewVersionDialog() {
@@ -73,40 +80,61 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                downloadUtil.startDownload();
+                dialog.dismiss();
+                downloadManager.startDownload();
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                downloadUtil.ExitApp();
+                dialog.dismiss();
+                if (config.isForceToUpdate())
+                    ExitApp();
             }
         });
         builder.setCancelable(false);
         return builder.show();
     }
 
-    public void showProgressDialog() {
+    public Dialog getNotWifiDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("下载中");
-        builder.setMessage(getLoadingMsg(0));
+        builder.setTitle("提示");
+        builder.setMessage("当前为移动网络，继续下载可能会产生流量费");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                downloadManager.startDownload();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if (config.isForceToUpdate())
+                    ExitApp();
+            }
+        });
         builder.setCancelable(false);
-        dialog = builder.show();
+        return builder.create();
+    }
+
+    public void showProgressDialog() {
+        AlertDialog.Builder progressBuilder = new AlertDialog.Builder(this);
+        progressBuilder.setTitle("下载中");
+        progressBuilder.setMessage(getLoadingMsg(0));
+        progressBuilder.setCancelable(false);
+        dialog = progressBuilder.show();
     }
 
     public String getLoadingMsg(int progress) {
-        return String.format("当前下载进度：%d", progress);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        return String.format(Locale.getDefault(), "当前下载进度：%d", progress);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        downloadUtil.onDestroy();
+        downloadManager.onDestroy();
     }
 
 }
