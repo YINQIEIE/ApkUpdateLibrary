@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MyApplication.getRw().watch(this);
-        String url = "http://hm.hawknet.com.cn/hm_debug_2.0.apk";
+        String url = "";//下载地址
         String updateMsg = "new version avaliable";
         String savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp";
         String localName = "hello";
